@@ -18,6 +18,7 @@
             GBR: '#8c564b',
             FRA: '#d62728',
             PAK: '#7f7f7f',
+            chicken: '#0FFFFF',
         },
 
         data: {
@@ -76,6 +77,9 @@
             datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
             function redraw() {
                 datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+                datamap.svg.select('g').selectAll('path').style('vector-effect', 'non-scaling-stroke');
+                 rescaleWorld(datamap);
+                rescaleBubbles(datamap);
             }
 
 
@@ -90,43 +94,46 @@
 
     var bombs = [{
         name: 'RDS-37',
-        radius: 40,
+        radius: 15,//
         yield: 1600,
         country: 'USSR',
-        fillKey: 'RUS',
-        significance: 'First "staged" thermonuclear weapon test by the USSR (deployable)',
+        fillKey: 'RUS',//
         date: '1955-11-22',
-        latitude: 50.07,
-        longitude: 78.43
+        latitude: 50.07,//
+        longitude: 78.43,//
+        file: 'pdf',
+        format: '.pdf',
 
     },{
-        name: 'Joe 4',
-        radius: 25,
-        yield: 400,
-        country: 'USSR',
-        fillKey: 'RUS',
-        significance: 'First fusion weapon test by the USSR (not "staged")',
-        date: '1953-08-12',
-        latitude: 50.07,
-        longitude: 78.43
-    },{
         name: 'Tsar Bomba',
-        radius: 75,
+        radius: 15,
         yield: 50000,
         country: 'USSR',
         fillKey: 'RUS',
-        significance: 'Largest thermonuclear weapon ever tested—scaled down from its initial 100 Mt design by 50%',
         date: '1961-10-31',
         latitude: 73.482,
-        longitude: 54.5854
+        longitude: 54.5854,
+        file: 'cat',
+        format: '.jpg',
+    },{
+        name: 'chicken',
+        radius: 15,
+        yield: 'chicken',
+        country: 'chicken',
+        fillKey: 'chicken',
+        date: 'chicken',
+        latitude: 55.7023846,
+        longitude: 12.5861773,
+        file: 'chicken',
+        format: '.pdf'
     }
     ];
 
     //declare bubbles and make them display their name
     map.bubbles(bombs, {
         popupTemplate: function(geo, data) {
-            return ['<div class="hoverinfo">' +  data.name,
-                '<br/>Payload: ' +  data.yield + ' kilotons',
+            return ['<div class="hoverinfo"><b>' +  data.name,
+                '</b><br/>Payload: ' +  data.yield + ' kilotons',
                 '<br/>Country: ' +  data.country + '',
                 '<br/>Date: ' +  data.date + '',
                 '</div>'].join('');
@@ -136,9 +143,12 @@
 
     //bubble click
     d3.selectAll(".datamaps-bubble").on('click', function(bubble) {
-        document.getElementById("displayP").innerHTML = document.getElementById("displayP").innerHTML + "<br/>"+bubble.name;
+        document.getElementById("displayP").innerHTML = document.getElementById("displayP").innerHTML + "<br/>opening " + bubble.file + bubble.format;
         //map.bubbles([]);//deletes all bubbles
-        greenSlovakia();
+        if (bubble.format === '.pdf')
+            document.getElementById("bubbleDisplay").innerHTML = "<object type='application/pdf' width='100%' height='100%' data='"+bubble.file+bubble.format+"'></object>";
+        else
+            document.getElementById("bubbleDisplay").innerHTML = "<img src='" + bubble.file + bubble.format + "'>";
     });
 
     /*function(datamap) {
@@ -155,3 +165,19 @@
             SVK: {fillKey: 'slovookia'}
         });
     }
+
+function rescaleWorld(datamap) {
+    datamap.svg
+        .selectAll('g')
+        .attr('transform', 'translate(' + d3.event.translate + ') scale(' + d3.event.scale + ')');
+}
+
+function rescaleBubbles(datamap) {
+    var bubbleRadius = 15;
+    var bubbleBorder = 1;
+
+    datamap.svg
+        .selectAll('.datamaps-bubble')
+        .attr('r', bubbleRadius / d3.event.scale)
+        .style('stroke-width', (bubbleBorder / d3.event.scale) + 'px');
+}
