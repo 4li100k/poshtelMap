@@ -22,16 +22,16 @@
         },
 
         data: {
-//            USA: {fillKey: 'gt50' },
-//            RUS: {fillKey: 'lt50' },
-//            CAN: {fillKey: 'lt50' },
-//            BRA: {fillKey: 'gt50' },
-//            ARG: {fillKey: 'gt50'},
-//            COL: {fillKey: 'gt50' },
-//            AUS: {fillKey: 'gt50' },
-//            ZAF: {fillKey: 'gt50' },
-//            MAD: {fillKey: 'gt50' },
-            DNK: {fillKey: 'occupied'},
+           USA: {fillKey: 'gt50' },
+           RUS: {fillKey: 'lt50' },
+           CAN: {fillKey: 'lt50' },
+           BRA: {fillKey: 'gt50' },
+           ARG: {fillKey: 'gt50'},
+           COL: {fillKey: 'gt50' },
+           AUS: {fillKey: 'gt50' },
+           ZAF: {fillKey: 'gt50' },
+           MAD: {fillKey: 'gt50' },
+           DNK: {fillKey: 'occupied'},
         },
 
         setProjection: function(element) {
@@ -85,7 +85,7 @@
             //on country click
             datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
                 var m = {};
-                // m[geography.id] = '#FFFFFF';
+                m[geography.id] = '#FF00FF';
                 datamap.updateChoropleth(m);
                 document.getElementById("bubbleDisplay").innerHTML ="";
                 append(geography.properties.name);
@@ -145,7 +145,7 @@
 
     //bubble click
     d3.selectAll(".datamaps-bubble").on('click', function(bubble) {
-        append("<br/>opening " + bubble.file + bubble.format);
+        append("opening " + bubble.file + bubble.format);
         //map.bubbles([]);//deletes all bubbles
         if (bubble.format === '.pdf')
             document.getElementById("bubbleDisplay").innerHTML = "<object type='application/pdf' width='100%' height='100%' data='"+bubble.file+bubble.format+"'></object>";
