@@ -5,7 +5,7 @@
         projection: 'mercator',
         height: 800,
         fills: {
-            defaultFill: '#c8ff80',
+            defaultFill: 'rgba(90,90,90,0.5)',
             lt50: 'rgba(0,244,244,0.9)',
             gt50: '#FF0000',
             slovookia: 'green',
@@ -36,7 +36,7 @@
 
         setProjection: function(element) {
             var projection = d3.geo.equirectangular()
-                .center([13, 40])
+                .center([13, 0])
                 .rotate([4.4, 0])
                 .scale(200)
                 .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
@@ -48,9 +48,9 @@
 
         geographyConfig: {
             dataUrl: null, // If not null, datamaps will fetch the map JSON (currently only supports topojson)
-            borderWidth: 0.05,
+            borderWidth: 0.5,
             borderOpacity: 1,
-            borderColor: '#000000',
+            borderColor: '#FFFFFF',
             popupOnHover: true, // True to show the popup while hovering
             highlightOnHover: true,
             highlightFillColor: '#FC8D59',
@@ -73,21 +73,23 @@
         }*/
 
         done: function(datamap){
-
-            datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
-            function redraw() {
+            //on zoom redraw
+            datamap.svg.call(d3.behavior.zoom().on("zoom", function() {
                 datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
                 datamap.svg.select('g').selectAll('path').style('vector-effect', 'non-scaling-stroke');
-                 rescaleWorld(datamap);
+                rescaleWorld(datamap);
                 rescaleBubbles(datamap);
-            }
+            }));
 
 
-            /*datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+            //on country click
+            datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
                 var m = {};
-                m[geography.id] = '#FFFFFF';
+                // m[geography.id] = '#FFFFFF';
                 datamap.updateChoropleth(m);
-            }*/
+                document.getElementById("bubbleDisplay").innerHTML ="";
+                append(geography.properties.name);
+            });
         },
 
     });
@@ -143,7 +145,7 @@
 
     //bubble click
     d3.selectAll(".datamaps-bubble").on('click', function(bubble) {
-        document.getElementById("displayP").innerHTML = document.getElementById("displayP").innerHTML + "<br/>opening " + bubble.file + bubble.format;
+        append("<br/>opening " + bubble.file + bubble.format);
         //map.bubbles([]);//deletes all bubbles
         if (bubble.format === '.pdf')
             document.getElementById("bubbleDisplay").innerHTML = "<object type='application/pdf' width='100%' height='100%' data='"+bubble.file+bubble.format+"'></object>";
@@ -180,4 +182,8 @@ function rescaleBubbles(datamap) {
         .selectAll('.datamaps-bubble')
         .attr('r', bubbleRadius / d3.event.scale)
         .style('stroke-width', (bubbleBorder / d3.event.scale) + 'px');
+}
+
+function append(string){
+    document.getElementById("displayP").innerHTML = document.getElementById("displayP").innerHTML + "<br/>" + string;
 }
